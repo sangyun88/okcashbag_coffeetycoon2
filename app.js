@@ -680,7 +680,7 @@ function renderIngredientIcon(ingredient, className) {
 function renderRecipeSequence() {
   const ingredients = currentRecipe().steps.map((step) => step.ingredient);
   return `
-    <div class="recipe-sequence" style="background-color:#FFF9F3" aria-label="레시피 순서: ${ingredients.join(", ")}">
+    <div class="recipe-sequence" aria-label="레시피 순서: ${ingredients.join(", ")}">
       <h3 class="sequence-title"><span>${currentStage().label}</span><span>${formatRecipeName(currentRecipe().name)}</span></h3>
       <div class="sequence-list">
       ${ingredients
@@ -690,7 +690,6 @@ function renderRecipeSequence() {
               ${renderIngredientIcon(ingredient, "sequence-icon")}
               <strong>${ingredient}</strong>
             </div>
-            ${index < ingredients.length - 1 ? `<span class="sequence-arrow" aria-hidden="true">›</span>` : ""}
           `,
         )
         .join("")}
