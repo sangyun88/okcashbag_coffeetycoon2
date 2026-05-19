@@ -8,7 +8,7 @@ const ASSETS = {
   cupAmericano: "./ice_americano.png",
   cupEspresso: "./espresso.png",
   espressoMachineIdle: "./espresso_machine1.png",
-  espressoMachineDone: "./espresso.png",
+  espressoMachineDone: "./espresso_machine2.png",
   iceMini: "./ice_mini.png",
   waterMini: "./water_mini.png",
   coffeeMini: "./coffee_mini.png",
@@ -674,7 +674,7 @@ function ingredientIcon(ingredient) {
 
 function renderIngredientIcon(ingredient, className) {
   const icon = ingredientIcon(ingredient);
-  return icon ? `<img class="${className}" src="${icon}" alt="" />` : "";
+  return icon ? `<img class="${className}" src="${icon}" alt="" onerror="this.style.display='none'" />` : "";
 }
 
 function renderRecipeSequence() {
@@ -705,24 +705,28 @@ function renderMakingGraphic() {
   const feedback = ["Bad", "Good", "Great"].includes(state.lastFeedback) ? state.lastFeedback : "";
   const stageImage =
     state.recipeComplete?.ready || state.stepPhase === "complete"
-      ? ASSETS.cupAmericano
+      ? currentRecipe().image
       : state.recipeComplete || state.stepPhase === "finishing"
-        ? ASSETS.cupAmericano
+        ? isAmericano ? ASSETS.cupAmericano : currentRecipe().image
         : isAmericano && state.stepPhase === "espresso-done"
           ? ASSETS.espressoMachineDone
-      : isAmericano && state.stepPhase === "action" && step.ingredient === "물"
-        ? ASSETS.cupWater
-        : isAmericano && state.stepPhase === "action" && step.ingredient === "에스프레소"
-          ? ASSETS.espressoMachineIdle
-          : isAmericano && state.stepIndex >= 2
-            ? ASSETS.cupWater
-            : isAmericano && state.stepIndex >= 1
-              ? ASSETS.cupIce
-              : ASSETS.cupStart;
+          : isAmericano && state.stepPhase === "action" && step.ingredient === "얼음"
+            ? ASSETS.cupIce
+            : isAmericano && state.stepPhase === "action" && step.ingredient === "물"
+              ? ASSETS.cupWater
+              : isAmericano && state.stepPhase === "action" && step.ingredient === "에스프레소"
+                ? ASSETS.espressoMachineIdle
+                : isAmericano && state.stepIndex >= 2
+                  ? ASSETS.cupWater
+                  : isAmericano && state.stepIndex >= 1
+                    ? ASSETS.cupIce
+                    : isAmericano
+                      ? ASSETS.cupStart
+                      : currentRecipe().image;
   return `
     <div class="making-graphic" aria-label="${formatRecipeName(currentRecipe().name)} 만드는 중">
       ${feedback ? `<span class="timing-feedback ${feedback.toLowerCase()}">${feedback}</span>` : ""}
-      <img class="making-image" src="${stageImage}" alt="" />
+      <img class="making-image" src="${stageImage}" alt="" onerror="this.onerror=null;this.src='${currentRecipe().image || ASSETS.cupStart}'" />
     </div>
   `;
 }
@@ -733,7 +737,7 @@ function renderRecipeCompleteModal() {
     <div class="completion-backdrop" role="dialog" aria-modal="true" aria-label="${formatRecipePopupName(state.recipeComplete.name)} 완성">
       <article class="completion-modal">
         <h2>${formatRecipePopupName(state.recipeComplete.name)} 완성!</h2>
-        <img class="completion-image" src="${state.recipeComplete.image}" alt="" />
+        <img class="completion-image" src="${state.recipeComplete.image}" alt="" onerror="this.onerror=null;this.src='${ASSETS.cupStart}'" />
         <button class="primary-button" onclick="continueNextRecipe()">다음 레시피 만들기</button>
       </article>
     </div>
