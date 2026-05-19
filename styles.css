@@ -631,11 +631,11 @@ h3 {
 }
 
 .timing-feedback.great {
-  color: var(--success);
+  color: #d28a00;
 }
 
 .timing-feedback.good {
-  color: var(--toss-blue);
+  color: var(--success);
 }
 
 .timing-feedback.bad {
@@ -852,8 +852,7 @@ h3 {
   height: 28px;
   border-radius: 999px;
   background: #3a2417;
-  transform: translateX(-2px);
-  transition: left 70ms linear;
+  transform: translateX(-50%);
 }
 
 .choice-grid {
