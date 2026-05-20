@@ -504,28 +504,23 @@ function finishAmericanoEspressoStep() {
   const recipe = currentRecipe();
   const key = `${currentStage().id}-${state.recipeIndex}`;
   state.completedRecipes[key] = true;
-  state.stepPhase = "espresso-done";
-  state.recipeComplete = null;
+  state.stepPhase = "finishing";
+  state.recipeComplete = {
+    name: recipe.name,
+    image: getRecipeCompletionImage(recipe),
+    ready: false,
+  };
   state.lastFeedback = "Great";
   track("recipe_clear", { recipe_slot: state.recipeIndex + 1, recipe_id: recipe.name });
   render();
   clearFinishTimer();
   state.finishTimer = window.setTimeout(() => {
-    state.stepPhase = "finishing";
-    state.recipeComplete = {
-      name: recipe.name,
-      image: getRecipeCompletionImage(recipe),
-      ready: false,
-    };
+    state.finishTimer = null;
+    if (!state.recipeComplete) return;
+    state.recipeComplete.ready = true;
+    state.stepPhase = "complete";
     render();
-    state.finishTimer = window.setTimeout(() => {
-      state.finishTimer = null;
-      if (!state.recipeComplete) return;
-      state.recipeComplete.ready = true;
-      state.stepPhase = "complete";
-      render();
-    }, RECIPE_COMPLETION_WAIT_MS);
-  }, 2000);
+  }, RECIPE_COMPLETION_WAIT_MS);
 }
 
 function continueNextRecipe() {
