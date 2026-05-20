@@ -371,18 +371,20 @@ h3 {
 .sequence-item.completed::after {
   content: "✓";
   position: absolute;
-  top: 7px;
-  right: 7px;
-  width: 22px;
-  height: 22px;
+  left: 50%;
+  top: 50%;
+  width: auto;
+  height: auto;
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: var(--success);
-  color: #fff;
-  font-size: 14px;
+  background: transparent;
+  color: var(--success);
+  font-size: 34px;
   font-weight: 900;
-  box-shadow: 0 8px 16px rgba(59, 138, 88, 0.28);
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  box-shadow: none;
 }
 
 .island {
