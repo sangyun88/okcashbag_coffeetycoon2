@@ -684,14 +684,16 @@ function renderRecipeSequence() {
       <h3 class="sequence-title"><span>${currentStage().label}</span><span>${formatRecipeName(currentRecipe().name)}</span></h3>
       <div class="sequence-list">
       ${ingredients
-        .map(
-          (ingredient, index) => `
-            <div class="sequence-item ${index <= state.stepIndex ? "active" : ""}">
+        .map((ingredient, index) => {
+          const isCompleted = Boolean(state.recipeComplete) || index < state.stepIndex;
+          const isActive = !isCompleted && index === state.stepIndex;
+          return `
+            <div class="sequence-item ${isCompleted ? "completed" : ""} ${isActive ? "active" : ""}">
               ${renderIngredientIcon(ingredient, "sequence-icon")}
               <strong>${ingredient}</strong>
             </div>
-          `,
-        )
+          `;
+        })
         .join("")}
       </div>
     </div>
