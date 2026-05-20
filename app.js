@@ -745,6 +745,20 @@ function renderRecipeCompleteModal() {
   `;
 }
 
+function renderFailureModal() {
+  if (state.stepPhase !== "failed") return "";
+  return `
+    <div class="failure-backdrop" role="dialog" aria-modal="true" aria-label="타이밍 실패">
+      <article class="failure-modal">
+        <span class="failure-mark" aria-hidden="true">!</span>
+        <h2>타이밍이 빗나갔어요</h2>
+        <p class="hint-text retry-copy">친구에게 공유하면 이번 재료를 한 번 더 시도할 수 있어요.</p>
+        <button class="primary-button" onclick="shareRetry()">친구에게 공유하고 다시 시도</button>
+      </article>
+    </div>
+  `;
+}
+
 function renderLanding() {
   track("landing_view");
   return `
@@ -803,13 +817,7 @@ function renderStage() {
                   <div class="step-title">레시피가 완성되고 있어요</div>
                 </div>
               `
-              : failedStep
-              ? `
-                <div class="step-title">타이밍이 빗나갔어요</div>
-                <p class="hint-text retry-copy">친구에게 공유하면 이번 재료를 한 번 더 시도할 수 있어요.</p>
-                <button class="primary-button" onclick="shareRetry()">친구에게 공유하고 다시 시도</button>
-              `
-              : selectingIngredient
+              : failedStep || selectingIngredient
               ? `
                 <div class="step-title">레시피 순서대로 재료를 선택해주세요</div>
                 <div class="choice-grid">
@@ -829,6 +837,7 @@ function renderStage() {
         </section>
       </section>
       ${renderRecipeCompleteModal()}
+      ${renderFailureModal()}
     </section>
   `;
 }

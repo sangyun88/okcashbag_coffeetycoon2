@@ -1108,6 +1108,17 @@ h3 {
   backdrop-filter: blur(4px);
 }
 
+.failure-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: rgba(58, 36, 23, 0.24);
+  backdrop-filter: blur(4px);
+}
+
 .completion-modal {
   width: min(100%, 308px);
   border-radius: 30px;
@@ -1120,6 +1131,37 @@ h3 {
 .completion-modal h2 {
   margin-bottom: 12px;
   font-size: 22px;
+}
+
+.failure-modal {
+  width: min(100%, 308px);
+  border-radius: 30px;
+  background: #fffaf4;
+  padding: 28px 22px 22px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(58, 36, 23, 0.26);
+}
+
+.failure-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 12px;
+  background: #ffe1e3;
+  color: var(--error);
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.failure-modal h2 {
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+
+.failure-modal .primary-button {
+  margin-top: 6px;
 }
 
 .completion-image {
