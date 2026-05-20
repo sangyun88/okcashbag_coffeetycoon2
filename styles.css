@@ -308,6 +308,8 @@ h3 {
 }
 
 .sequence-list {
+  width: 260px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
