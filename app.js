@@ -16,7 +16,7 @@ const ASSETS = {
   waterMini: "./water_mini.png",
   coffeeMini: "./coffee_mini.png",
   milkMini: "./milk_mini.png",
-  milkSteam: "./milk_steam.png",
+  milkSteam: "./milk_steam.png?v=20260520",
   honeyMini: "./honey_mini.png",
   vanillaMini: "./vanilla_mini.png",
 };
