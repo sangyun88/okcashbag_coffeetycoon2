@@ -6,6 +6,9 @@ const ASSETS = {
   cupIce: "./ice_cup.png",
   cupWater: "./ice_water.png",
   cupAmericano: "./ice_americano.png",
+  cupHot: "./cup_hot.png",
+  hotEspresso: "./hot_espresso.png",
+  hotCafelatte: "./hot_cafelatte.png",
   cupEspresso: "./espresso.png",
   espressoMachineIdle: "./espresso_machine1.png",
   espressoMachineDone: "./espresso_machine2.png",
@@ -211,6 +214,18 @@ function currentStep() {
   return currentRecipe().steps[state.stepIndex];
 }
 
+function isCafeLatteHot(recipe = currentRecipe()) {
+  return recipe?.name === "카페라떼 HOT";
+}
+
+function getRecipeCompletionImage(recipe) {
+  return isCafeLatteHot(recipe) ? ASSETS.hotCafelatte : recipe.image;
+}
+
+function getCompletionImageFallback(recipeName) {
+  return recipeName === "카페라떼 HOT" ? ASSETS.latte : ASSETS.cupStart;
+}
+
 function shuffleOptions(options) {
   const shuffled = [...options];
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
@@ -220,19 +235,18 @@ function shuffleOptions(options) {
   return shuffled;
 }
 
-function optionCacheKey() {
-  return `${state.stageIndex}-${state.recipeIndex}-${state.stepIndex}`;
+function optionCacheKey(options) {
+  return `${state.stageIndex}-${state.recipeIndex}-${options.join("|")}`;
 }
 
 function stepOptions(step) {
-  const cacheKey = optionCacheKey();
-  if (state.optionOrderCache[cacheKey]) return state.optionOrderCache[cacheKey];
-
   const recipeIngredients = currentRecipe().steps.map((recipeStep) => recipeStep.ingredient);
   const distractors = ["우유", "허니 시럽", "바닐라 시럽", "카라멜 시럽", "수박 베이스", "초코 시럽"];
   const options = step.options
     ? [...new Set(step.options)]
     : [...new Set([...recipeIngredients, ...distractors.filter((option) => !recipeIngredients.includes(option))])].slice(0, 6);
+  const cacheKey = optionCacheKey(options);
+  if (state.optionOrderCache[cacheKey]) return state.optionOrderCache[cacheKey];
 
   const randomizedOptions = shuffleOptions(options);
   state.optionOrderCache[cacheKey] = randomizedOptions;
@@ -357,8 +371,16 @@ function startGauge() {
   stopGauge();
   state.needle = 0;
   state.needleDirection = 1;
-  state.timer = window.setInterval(() => {
-    const next = state.needle + state.needleDirection * currentStage().gaugeSpeed * 3.8;
+  let lastFrameTime = null;
+  const tick = (timestamp) => {
+    if (state.view !== "stage" || state.stepPhase !== "action") {
+      state.timer = null;
+      return;
+    }
+    if (lastFrameTime === null) lastFrameTime = timestamp;
+    const deltaMs = Math.min(timestamp - lastFrameTime, 34);
+    lastFrameTime = timestamp;
+    const next = state.needle + state.needleDirection * currentStage().gaugeSpeed * 0.063 * deltaMs;
     if (next >= 100) {
       state.needle = 100;
       state.needleDirection = -1;
@@ -369,12 +391,14 @@ function startGauge() {
       state.needle = next;
     }
     updateGaugeNeedle();
-  }, 60);
+    state.timer = window.requestAnimationFrame(tick);
+  };
+  state.timer = window.requestAnimationFrame(tick);
 }
 
 function stopGauge() {
   if (state.timer) {
-    window.clearInterval(state.timer);
+    window.cancelAnimationFrame(state.timer);
     state.timer = null;
   }
 }
@@ -450,7 +474,6 @@ function nextStep() {
     state.stepIndex += 1;
     state.stepPhase = "select";
     state.needle = 0;
-    state.optionOrderCache = {};
     render();
     return;
   }
@@ -461,7 +484,7 @@ function nextStep() {
   state.stepPhase = "finishing";
   state.recipeComplete = {
     name: recipe.name,
-    image: recipe.image,
+    image: getRecipeCompletionImage(recipe),
     ready: false,
   };
   state.lastFeedback = "Great";
@@ -491,7 +514,7 @@ function finishAmericanoEspressoStep() {
     state.stepPhase = "finishing";
     state.recipeComplete = {
       name: recipe.name,
-      image: recipe.image,
+      image: getRecipeCompletionImage(recipe),
       ready: false,
     };
     render();
@@ -601,7 +624,6 @@ function shareRetry() {
   state.stepPhase = "select";
   state.needle = 0;
   state.lastFeedback = "";
-  state.optionOrderCache = {};
   track("share_retry", { channel: "demo", stage: currentStage().id, recipe_id: currentRecipe().name, step: currentStep().ingredient });
   showToast("공유 완료! 한 번 더 시도할 수 있어요.");
 }
@@ -710,43 +732,52 @@ function renderRecipeSequence() {
 
 function renderMakingGraphic() {
   const step = currentStep();
-  const isAmericano = currentRecipe().name === "메가리카노 ICE";
+  const recipe = currentRecipe();
+  const isAmericano = recipe.name === "메가리카노 ICE";
+  const isHotLatte = isCafeLatteHot(recipe);
   const feedback = ["Bad", "Good", "Great"].includes(state.lastFeedback) ? state.lastFeedback : "";
   const stageImage =
-    state.recipeComplete?.ready || state.stepPhase === "complete"
-      ? currentRecipe().image
-      : state.recipeComplete || state.stepPhase === "finishing"
-        ? isAmericano ? ASSETS.cupAmericano : currentRecipe().image
-        : isAmericano && state.stepPhase === "espresso-done"
-          ? ASSETS.espressoMachineDone
-          : isAmericano && state.stepPhase === "action" && step.ingredient === "얼음"
-            ? ASSETS.cupIce
-            : isAmericano && state.stepPhase === "action" && step.ingredient === "물"
-              ? ASSETS.cupWater
-              : isAmericano && state.stepPhase === "action" && step.ingredient === "에스프레소"
-                ? ASSETS.espressoMachineIdle
-                : isAmericano && state.stepIndex >= 2
-                  ? ASSETS.cupWater
-                  : isAmericano && state.stepIndex >= 1
-                    ? ASSETS.cupIce
-                    : isAmericano
-                      ? ASSETS.cupStart
-                      : currentRecipe().image;
+    isHotLatte && (state.recipeComplete || state.stepPhase === "finishing" || state.stepPhase === "complete")
+      ? ASSETS.hotCafelatte
+      : isHotLatte && state.stepIndex >= 1
+        ? ASSETS.hotEspresso
+        : isHotLatte
+          ? ASSETS.cupHot
+          : state.recipeComplete?.ready || state.stepPhase === "complete"
+            ? recipe.image
+            : state.recipeComplete || state.stepPhase === "finishing"
+              ? isAmericano ? ASSETS.cupAmericano : recipe.image
+              : isAmericano && state.stepPhase === "espresso-done"
+                ? ASSETS.espressoMachineDone
+                : isAmericano && state.stepPhase === "action" && step.ingredient === "얼음"
+                  ? ASSETS.cupIce
+                  : isAmericano && state.stepPhase === "action" && step.ingredient === "물"
+                    ? ASSETS.cupWater
+                    : isAmericano && state.stepPhase === "action" && step.ingredient === "에스프레소"
+                      ? ASSETS.espressoMachineIdle
+                      : isAmericano && state.stepIndex >= 2
+                        ? ASSETS.cupWater
+                        : isAmericano && state.stepIndex >= 1
+                          ? ASSETS.cupIce
+                          : isAmericano
+                            ? ASSETS.cupStart
+                            : recipe.image;
   return `
-    <div class="making-graphic" aria-label="${formatRecipeName(currentRecipe().name)} 만드는 중">
+    <div class="making-graphic" aria-label="${formatRecipeName(recipe.name)} 만드는 중">
       ${feedback ? `<span class="timing-feedback ${feedback.toLowerCase()}">${feedback}</span>` : ""}
-      <img class="making-image" src="${stageImage}" alt="" onerror="this.onerror=null;this.src='${currentRecipe().image || ASSETS.cupStart}'" />
+      <img class="making-image" src="${stageImage}" alt="" onerror="this.onerror=null;this.src='${recipe.image || ASSETS.cupStart}'" />
     </div>
   `;
 }
 
 function renderRecipeCompleteModal() {
   if (!state.recipeComplete?.ready) return "";
+  const fallbackImage = getCompletionImageFallback(state.recipeComplete.name);
   return `
     <div class="completion-backdrop" role="dialog" aria-modal="true" aria-label="${formatRecipePopupName(state.recipeComplete.name)} 완성">
       <article class="completion-modal">
         <h2>${formatRecipePopupName(state.recipeComplete.name)} 완성!</h2>
-        <img class="completion-image" src="${state.recipeComplete.image}" alt="" onerror="this.onerror=null;this.src='${ASSETS.cupStart}'" />
+        <img class="completion-image" src="${state.recipeComplete.image}" alt="" onerror="this.onerror=null;this.src='${fallbackImage}'" />
         <button class="primary-button" onclick="continueNextRecipe()">다음 레시피 만들기</button>
       </article>
     </div>
