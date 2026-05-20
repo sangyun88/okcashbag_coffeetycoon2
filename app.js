@@ -13,6 +13,7 @@ const ASSETS = {
   waterMini: "./water_mini.png",
   coffeeMini: "./coffee_mini.png",
   milkMini: "./milk_mini.png",
+  milkSteam: "./milk_steam.png",
   honeyMini: "./honey_mini.png",
   vanillaMini: "./vanilla_mini.png",
 };
@@ -42,7 +43,7 @@ const stages = [
         tier: "easy",
         steps: [
           { type: "stop", ingredient: "에스프레소", target: 58 },
-          { type: "stop", ingredient: "우유", target: 67 },
+          { type: "stop", ingredient: "스팀우유", target: 67 },
         ],
       },
       {
@@ -666,15 +667,22 @@ function ingredientIcon(ingredient) {
   if (ingredient.includes("얼음")) return ASSETS.iceMini;
   if (ingredient.includes("물")) return ASSETS.waterMini;
   if (ingredient.includes("에스프레소") || ingredient.includes("커피")) return ASSETS.coffeeMini;
+  if (ingredient.includes("스팀우유")) return ASSETS.milkSteam;
   if (ingredient.includes("우유")) return ASSETS.milkMini;
   if (ingredient.includes("허니")) return ASSETS.honeyMini;
   if (ingredient.includes("바닐라")) return ASSETS.vanillaMini;
   return "";
 }
 
+function ingredientIconFallback(ingredient) {
+  return ingredient.includes("스팀우유") ? ASSETS.milkMini : "";
+}
+
 function renderIngredientIcon(ingredient, className) {
   const icon = ingredientIcon(ingredient);
-  return icon ? `<img class="${className}" src="${icon}" alt="" onerror="this.style.display='none'" />` : "";
+  const fallback = ingredientIconFallback(ingredient);
+  const onerror = fallback ? `this.onerror=null;this.src='${fallback}'` : "this.style.display='none'";
+  return icon ? `<img class="${className}" src="${icon}" alt="" onerror="${onerror}" />` : "";
 }
 
 function renderRecipeSequence() {
