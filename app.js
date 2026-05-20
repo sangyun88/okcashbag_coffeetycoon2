@@ -6,7 +6,7 @@ const ASSETS = {
   cupIce: "./ice_cup.png",
   cupWater: "./ice_water.png",
   cupAmericano: "./ice_americano.png",
-  cupHot: "./cup_hot.png",
+  cupHot: "./cup_hot.png?v=20260520-2",
   hotEspresso: "./hot_espresso.png",
   hotCafelatte: "./hot_cafelatte.png",
   cupEspresso: "./espresso.png",
