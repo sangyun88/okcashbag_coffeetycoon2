@@ -799,7 +799,7 @@ function renderLanding() {
     <section class="page sky">
       ${renderNav("landing", `<button class="guide-button" onclick="setView('info')" aria-label="안내">안내</button>`)}
       <div class="hero-center challenge-title">
-        <h1>커피 만들고<br /><span class="blue-text">1,000원 할인쿠폰 받기</span></h1>
+        <h1>메가커피 타이쿤하고<br /><span class="blue-text">1,000원 할인쿠폰 받기</span></h1>
         <p class="copy">STAGE3까지 모두 레시피대로 완성하세요!</p>
       </div>
       <section class="mission-card challenge-mission">
