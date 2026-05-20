@@ -740,7 +740,7 @@ function renderMakingGraphic() {
     isHotLatte && (state.recipeComplete || state.stepPhase === "finishing" || state.stepPhase === "complete")
       ? ASSETS.hotCafelatte
       : isHotLatte && state.stepIndex >= 1
-        ? ASSETS.hotEspresso
+        ? ASSETS.espressoMachineDone
         : isHotLatte
           ? ASSETS.cupHot
           : state.recipeComplete?.ready || state.stepPhase === "complete"
