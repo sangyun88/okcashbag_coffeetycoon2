@@ -9,6 +9,7 @@ const ASSETS = {
   cupHot: "./cup_hot.png?v=20260520-2",
   hotEspresso: "./hot_espresso.png",
   hotCafelatte: "./hot_cafelatte.png",
+  steam: "./steam.png",
   cupEspresso: "./espresso.png",
   espressoMachineIdle: "./espresso_machine1.png",
   espressoMachineDone: "./espresso_machine2.png",
@@ -734,6 +735,8 @@ function renderMakingGraphic() {
   const stageImage =
     isHotLatte && (state.recipeComplete || state.stepPhase === "finishing" || state.stepPhase === "complete")
       ? ASSETS.hotCafelatte
+      : isHotLatte && state.stepPhase === "action" && step.ingredient === "스팀우유"
+        ? ASSETS.steam
       : isHotLatte && state.stepPhase === "action" && step.ingredient === "에스프레소"
         ? ASSETS.espressoMachineDone
       : isHotLatte && state.stepIndex >= 1
