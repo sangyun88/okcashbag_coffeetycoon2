@@ -870,6 +870,13 @@ h3 {
   line-height: 1.45;
 }
 
+.timing-control {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .gauge {
   height: 18px;
   border-radius: 999px;
