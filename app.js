@@ -1,7 +1,7 @@
 const ASSETS = {
   melon: "./melon_juice.png",
   americano: "./mega_americano_ice.jpg",
-  latte: "./카페라떼(hot).jpg",
+  latte: "./cafe_latte_hot.jpg",
   cupStart: "./cup_ice.png",
   cupIce: "./ice_cup.png",
   cupWater: "./ice_water.png",
