@@ -859,13 +859,15 @@ function renderStage() {
                 </div>
               `
               : `
-                <div class="step-title">목표 구간에 맞춰 멈춰주세요</div>
-                <div class="gauge">
-                  <span class="target-zone" style="left:${zones.good.left}%; width:${zones.good.width}%;"></span>
-                  <span class="great-zone" style="left:${zones.great.left}%; width:${zones.great.width}%;"></span>
-                  <span class="gauge-needle" style="left:${state.needle}%;"></span>
+                <div class="timing-control">
+                  <div class="step-title">목표 구간에 맞춰 멈춰주세요</div>
+                  <div class="gauge">
+                    <span class="target-zone" style="left:${zones.good.left}%; width:${zones.good.width}%;"></span>
+                    <span class="great-zone" style="left:${zones.great.left}%; width:${zones.great.width}%;"></span>
+                    <span class="gauge-needle" style="left:${state.needle}%;"></span>
+                  </div>
+                  <button class="primary-button" onclick="judgeStop()">STOP</button>
                 </div>
-                <button class="primary-button" onclick="judgeStop()">STOP</button>
               `
           }
         </section>
