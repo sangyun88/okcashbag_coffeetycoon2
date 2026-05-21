@@ -8,7 +8,7 @@ const ASSETS = {
   cupAmericano: "./ice_americano.png",
   cupHot: "./cup_hot.png?v=20260520-2",
   hotEspresso: "./hot_espresso.png",
-  hotCafelatte: "./hot_cafelatte.png",
+  hotCafelatte: "./hot_cafelatte.png?v=20260521",
   steam: "./steam.png",
   cupEspresso: "./espresso.png",
   espressoMachineIdle: "./espresso_machine1.png",
