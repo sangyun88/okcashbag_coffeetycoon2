@@ -734,6 +734,8 @@ function renderMakingGraphic() {
   const stageImage =
     isHotLatte && (state.recipeComplete || state.stepPhase === "finishing" || state.stepPhase === "complete")
       ? ASSETS.hotCafelatte
+      : isHotLatte && state.stepPhase === "action" && step.ingredient === "에스프레소"
+        ? ASSETS.espressoMachineDone
       : isHotLatte && state.stepIndex >= 1
         ? ASSETS.hotEspresso
         : isHotLatte
